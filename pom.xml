@@ -8,7 +8,7 @@
 
   <groupId>CustomHistory</groupId>
   <artifactId>CustomHistory</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>hpi</packaging>
   <licenses>
      <license>
@@ -47,9 +47,9 @@
     </pluginRepository>
   </pluginRepositories>
   <scm>
-    <connection>scm:git:ssh://github.com/jenkinsci/CustomHistory.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/CustomHistory.git</developerConnection>
-    <url>https://github.com/jenkinsci/CustomHistory</url>
+    <connection>scm:git:ssh://github.com/jenkinsci/custom-history-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/custom-history-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/custom-history-plugin</url>
   </scm>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Custom+History</url>
 </project>
