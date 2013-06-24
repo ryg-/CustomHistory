@@ -8,7 +8,7 @@
 
   <groupId>CustomHistory</groupId>
   <artifactId>CustomHistory</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.3-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <licenses>
      <license>
@@ -21,6 +21,7 @@
     <developer>
       <id>ryg_</id>
       <name>Roman Grigoryev</name>
+      <email>rgrigoryev@gmail.com</email>
     </developer>
   </developers>
   
@@ -46,8 +47,9 @@
       <url>http://repo.jenkins-ci.org/public/</url>
     </pluginRepository>
   </pluginRepositories>
+
   <scm>
-    <connection>scm:git:ssh://github.com/jenkinsci/custom-history-plugin.git</connection>
+    <connection>scm:git:ssh://git@github.com/jenkinsci/custom-history-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/custom-history-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/custom-history-plugin</url>
   </scm>
