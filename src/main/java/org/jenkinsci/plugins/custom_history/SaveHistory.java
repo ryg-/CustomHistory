@@ -26,7 +26,6 @@ package org.jenkinsci.plugins.custom_history;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
@@ -35,9 +34,7 @@ import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
 import java.io.File;
-import java.io.IOException;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -45,9 +42,15 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author ryg
  */
 public class SaveHistory extends Notifier {
-
-    @DataBoundConstructor
-    public SaveHistory() {
+	public static final String  unifiedHistoryFile = "customHistoryUnified.log";
+	public final String fname;	
+    public final boolean exitOnFail; 
+    
+	@DataBoundConstructor
+    public SaveHistory(String fname, boolean exitOnFail) {
+		//this.getDescriptor().load();
+    	this.fname = fname;
+    	this.exitOnFail = exitOnFail;
     }
 
     @Override
@@ -60,33 +63,58 @@ public class SaveHistory extends Notifier {
      */
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) {
-        File dir = build.getArtifactsDir();
-        listener.getLogger().println("**ArtifactsDir= " + dir.getAbsolutePath());
+        String dir;
+        listener.getLogger().println(
+        		"Perfrom custom history collecting to file:"+fname);        
         try {
+        	dir = build.getArtifactsDir().getCanonicalPath();
+            File unifiedFile  = new File (dir,unifiedHistoryFile);
+        	File localFile  = new File (dir,fname);
+            listener.getLogger().println("**ArtifactsFile= " 
+            						+ localFile.getAbsolutePath());        	
             FilePath ws = build.getWorkspace();
-            if (ws == null) { // #3330: slave down?
-                return true;
+            if (ws == null && exitOnFail == true) { // #3330: slave down?
+                return false;
+            }
+            if (ws == null){
+            	return true;
             }
             listener.getLogger().println("**WS = " + ws.getBaseName());
 
-            String historyfile = "custom_history.txt";
-            int f = ws.copyRecursiveTo(historyfile, null, new FilePath(dir));
+            String historyfile = fname;
+            int f = ws.copyRecursiveTo(historyfile, null, new FilePath(build.getArtifactsDir()));
             if (f == 0) {
                 if (build.getResult().isBetterOrEqualTo(Result.UNSTABLE)) {
                     // If the build failed, don't complain that there was no matching artifact.
                     // The build probably didn't even get to the point where it produces artifacts. 
-                    listener.getLogger().println("0 custom history collected!");
+                    listener.getLogger().println("No custom history collected!");
+                    if(exitOnFail == true){
+                    	return false;
+                    }
                 } else {
                     listener.getLogger().println(f + " custom history collected!");
                 }
                 return true;
             }
-
+            if(unifiedFile.exists()){
+            	listener.getLogger().println(unifiedFile.getAbsolutePath() 
+            			+ " alredy exists, but this file name is reserved!");
+            	return false;
+            }
+            boolean renameResult = localFile.renameTo(unifiedFile);
+            if(!renameResult){
+            	listener.getLogger().println(
+            			"Cannow rename to file:"+
+            					unifiedFile.getAbsolutePath() );
+            	return false;
+            }
         } catch (Exception e) {
-            listener.getLogger().println("Caught exception" + e);
-            return true;
+            listener.getLogger().println(
+            		"Caught exception while collecting custom history" + e);
+            if(exitOnFail == true){
+            	return false;
+            }
         }
-
         return true;
     }
 

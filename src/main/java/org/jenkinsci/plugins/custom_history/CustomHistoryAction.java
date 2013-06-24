@@ -43,30 +43,31 @@ import java.util.Set;
 
 /**
  * Action to calculate all changes for a build
- * It uses ChangesAggregators to to so.
+ * It uses ChangesAggregators
  *
- * @author wolfs
+ * @author wolfs, ryg
  */
-public class CustomHistoryAction implements Action {
-
+public class CustomHistoryAction implements Action {	
     private AbstractProject<?, ?> project;
     transient List<HistoryAggregator> aggregators;
 
     CustomHistoryAction(AbstractProject<?, ?> project) {
         this.project = project;
     }
-
+    
+    
+    
     public String getIconFileName() {
         return "notepad.png";
     }
 
     public String getDisplayName() {
-        //return "Custom History (f)";
-        return Messages.CustomHistory_CustomChanges();
+        return "Custom History";
+        //return Messages.CustomHistory_CustomChanges();
     }
 
     public String getUrlName() {
-        return "custom-history";
+        return "customhistory";
     }
 
     /**
@@ -76,7 +77,7 @@ public class CustomHistoryAction implements Action {
      * @return
      */
     public Multimap<String, AbstractBuild> getAllChanges(AbstractBuild build) {
-        Set<AbstractBuild> builds = getContributingBuilds(build);
+        Set<AbstractBuild> builds = getContributingBuilds(build);        
         Multimap<String, AbstractBuild> historymmap = ArrayListMultimap.create();
         for (AbstractBuild changedBuild : builds) {
             File dir = build.getArtifactsDir();
@@ -86,7 +87,7 @@ public class CustomHistoryAction implements Action {
                 String NL = System.getProperty("line.separator");
                 scanner = new Scanner(
                         new FileInputStream(dir.getAbsoluteFile() 
-                        + "/custom_history.txt"));
+                        + "/"+SaveHistory.unifiedHistoryFile));
                 while (scanner.hasNextLine()) {
                     text.append(scanner.nextLine()).append(NL);
                 }

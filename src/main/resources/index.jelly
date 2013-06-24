@@ -26,5 +26,5 @@
   This view is used to render the installed plugins page.
 -->
 <div>
-  This plugin shows custom history from file
+  This plugin collect and  shows custom history from file
 </div>
