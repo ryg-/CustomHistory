@@ -40,14 +40,20 @@ import java.util.Collections;
  */
 @Extension
 public class CustomHistory extends TransientProjectActionFactory {
-    @Override
-    public Collection<? extends Action> createFor(AbstractProject target) {
-    	String  historyFileName = target.getLastBuild().getArtifactsDir().
-    				getAbsoluteFile()+"/"+SaveHistory.unifiedHistoryFile;
-    	File historyFile = new File(historyFileName);
-        if(historyFile.exists()){
-        	return Collections.singleton(new CustomHistoryAction(target));
-        }    	
-        return null; 
-    }
+	@Override	
+	public Collection<? extends Action> createFor(AbstractProject target) {
+		String historyFileName = null;
+		try {
+			historyFileName = target.getLastBuild().getArtifactsDir()
+					.getAbsoluteFile()
+					+ "/" + SaveHistory.unifiedHistoryFile;
+		} catch (Exception e) {
+			return null;
+		}
+		File historyFile = new File(historyFileName);
+		if (historyFile.exists()) {
+			return Collections.singleton(new CustomHistoryAction(target));
+		}
+		return null;
+	}
 }
